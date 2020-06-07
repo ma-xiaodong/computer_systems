@@ -4,23 +4,20 @@
 #define LENGTH 4096
 #define OP     *
 #define IDENT  1
-#define TYPE   double
+#define TYPE   float
+
+struct timeval t1,t2;
+double timeuse;
 
 TYPE combine5(TYPE *data) {
-  struct timeval t1,t2;
-  double timeuse;
-
   long idx, limit;
   TYPE acc = IDENT;
 
   limit = LENGTH - 1;
   gettimeofday(&t1, NULL);
 #ifdef UNROLL
-  for (idx = 0; idx < limit; idx += 8) {
+  for (idx = 0; idx < limit; idx += 2) {
     acc = (acc OP data[idx]) OP data[idx + 1];
-    acc = (acc OP data[idx + 2]) OP data[idx + 3];
-    acc = (acc OP data[idx + 4]) OP data[idx + 5];
-    acc = (acc OP data[idx + 6]) OP data[idx + 7];
   }
   for (; idx < LENGTH; idx++) {
     acc = acc OP data[idx];
@@ -32,8 +29,28 @@ TYPE combine5(TYPE *data) {
 #endif
   gettimeofday(&t2, NULL);
   timeuse = t2.tv_sec - t1.tv_sec + (t2.tv_usec - t1.tv_usec)/1000000.0;
-  printf("Use Time: %f\n", timeuse);
+  printf("combine5, use Time: %f\n", timeuse);
   return acc;
+}
+
+TYPE combine6(TYPE *data) {
+  long idx, limit;
+  TYPE acc0 = IDENT;
+  TYPE acc1 = IDENT;
+
+  limit = LENGTH - 1;
+  gettimeofday(&t1, NULL);
+  for (idx = 0; idx < limit; idx += 2) {
+    acc0 = acc0 OP data[idx];
+    acc1 = acc1 OP data[idx+1];
+  }
+  for (; idx < LENGTH; idx++) {
+    acc0 = acc0 OP data[idx];
+  }
+  gettimeofday(&t2, NULL);
+  timeuse = t2.tv_sec - t1.tv_sec + (t2.tv_usec - t1.tv_usec)/1000000.0;
+  printf("combine6, use Time: %f\n", timeuse);
+  return acc0 + acc1;
 }
 
 int main(int argc, char *argv) {
@@ -59,5 +76,8 @@ int main(int argc, char *argv) {
 
   dest = combine5(data);
   printf("Result: %f\n", dest);
+  dest = combine6(data);
+  printf("Result: %f\n", dest);
+
   return 0;
 }
