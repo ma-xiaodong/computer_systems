@@ -50,7 +50,7 @@ TYPE combine6(TYPE *data) {
   gettimeofday(&t2, NULL);
   timeuse = t2.tv_sec - t1.tv_sec + (t2.tv_usec - t1.tv_usec)/1000000.0;
   printf("combine6, use Time: %f\n", timeuse);
-  return acc0 + acc1;
+  return acc0 OP acc1;
 }
 
 int main(int argc, char *argv) {
