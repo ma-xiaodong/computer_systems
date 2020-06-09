@@ -9,9 +9,9 @@ typedef float     TYPE;
 void minmax1(TYPE *a, TYPE *b) {
   for (int i = 0; i < LENGTH; i++) {
     if (a[i] > b[i]) {
-      TYPE t = a[i];
+      TYPE max = a[i];
       a[i] = b[i];
-      b[i] = t;
+      b[i] = max;
     }
   }
 
@@ -20,8 +20,12 @@ void minmax1(TYPE *a, TYPE *b) {
 
 void minmax2(TYPE *a, TYPE *b) {
   for (int i = 0; i < LENGTH; i++) {
-    TYPE min = a[i] < b[i] ? a[i] : b[i];
-    TYPE max = a[i] < b[i] ? b[i] : a[i];
+    TYPE min, max, val_a, val_b;
+
+    val_a = a[i];
+    val_b = b[i];
+    max = val_a > val_b ? val_a : val_b;
+    min = val_a > val_b ? val_b : val_a;
     a[i] = min;
     b[i] = max;
   }
