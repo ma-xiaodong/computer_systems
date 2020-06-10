@@ -1,0 +1,144 @@
+	.file	"problem_5_11.c"
+	.text
+	.globl	psum
+	.type	psum, @function
+psum:
+.LFB2:
+	.cfi_startproc
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	movq	%rdi, -24(%rbp)       # address of a (rbp - 24)
+	movq	%rsi, -32(%rbp)       # address of p (rbp - 32)
+	movq	-24(%rbp), %rax       # a -> rax
+	movss	(%rax), %xmm0         # a[0] -> xmm0
+	movq	-32(%rbp), %rax       # p -> rax
+	movss	%xmm0, (%rax)         # a[0] -> p[0]
+	movl	$1, -4(%rbp)          # 1 -> (rbp - 4)
+	jmp	.L2
+.L3:
+	movl	-4(%rbp), %eax        # (rbp - 4) -> eax
+	cltq
+	leaq	0(,%rax,4), %rdx      # rdx, the induction var
+	movq	-32(%rbp), %rax       # addr of p -> rax
+	addq	%rdx, %rax            # addr of p[i] -> rax
+	movl	-4(%rbp), %edx        # edx, the induction var
+	movslq	%edx, %rdx
+	salq	$2, %rdx
+	leaq	-4(%rdx), %rcx        # induction - 4 -> rcx
+	movq	-32(%rbp), %rdx
+	addq	%rcx, %rdx            # addr of p[i - 1]
+	movss	(%rdx), %xmm1         # value of p[i - 1] -> xmm1
+	movl	-4(%rbp), %edx
+	movslq	%edx, %rdx
+	leaq	0(,%rdx,4), %rcx      # rcx, induction var
+	movq	-24(%rbp), %rdx       # rdx, addr of a
+	addq	%rcx, %rdx            # rdx, addr of a[i]
+	movss	(%rdx), %xmm0         # xmm0, value of a[i]
+	addss	%xmm1, %xmm0          # a[i] + p[i - 1] 
+	movss	%xmm0, (%rax)         # a[i] + p[i - 1] -> p[i]
+	addl	$1, -4(%rbp)
+.L2:
+	cmpl	$2047, -4(%rbp)       # cmp 2047 to (rbp - 4)
+	jle	.L3
+	nop
+	popq	%rbp
+	.cfi_def_cfa 7, 8
+	ret
+	.cfi_endproc
+.LFE2:
+	.size	psum, .-psum
+	.section	.rodata
+.LC2:
+	.string	"Time used by minmax2: %f\n"
+	.text
+	.globl	main
+	.type	main, @function
+main:
+.LFB3:
+	.cfi_startproc
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	subq	$16464, %rsp
+	movl	%edi, -16452(%rbp)
+	movq	%rsi, -16464(%rbp)
+	movq	%fs:40, %rax
+	movq	%rax, -8(%rbp)
+	xorl	%eax, %eax
+	movl	$0, -16440(%rbp)
+	jmp	.L6
+.L7:
+	pxor	%xmm0, %xmm0
+	cvtsi2sd	-16440(%rbp), %xmm0
+	movsd	.LC0(%rip), %xmm1
+	divsd	%xmm1, %xmm0
+	cvtsd2ss	%xmm0, %xmm0
+	movl	-16440(%rbp), %eax
+	cltq
+	movss	%xmm0, -16400(%rbp,%rax,4)
+	addl	$1, -16440(%rbp)
+.L6:
+	cmpl	$2047, -16440(%rbp)
+	jle	.L7
+	leaq	-16432(%rbp), %rax
+	movl	$0, %esi
+	movq	%rax, %rdi
+	call	gettimeofday
+	leaq	-8208(%rbp), %rdx
+	leaq	-16400(%rbp), %rax
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	psum
+	leaq	-16416(%rbp), %rax
+	movl	$0, %esi
+	movq	%rax, %rdi
+	call	gettimeofday
+	movq	-16416(%rbp), %rdx
+	movq	-16432(%rbp), %rax
+	subq	%rax, %rdx
+	movq	%rdx, %rax
+	pxor	%xmm1, %xmm1
+	cvtsi2sdq	%rax, %xmm1
+	movq	-16408(%rbp), %rdx
+	movq	-16424(%rbp), %rax
+	subq	%rax, %rdx
+	movq	%rdx, %rax
+	pxor	%xmm0, %xmm0
+	cvtsi2sdq	%rax, %xmm0
+	movsd	.LC1(%rip), %xmm2
+	divsd	%xmm2, %xmm0
+	addsd	%xmm1, %xmm0
+	cvtsd2ss	%xmm0, %xmm3
+	movss	%xmm3, -16436(%rbp)
+	cvtss2sd	-16436(%rbp), %xmm0
+	movl	$.LC2, %edi
+	movl	$1, %eax
+	call	printf
+	movl	$0, %eax
+	movq	-8(%rbp), %rcx
+	xorq	%fs:40, %rcx
+	je	.L9
+	call	__stack_chk_fail
+.L9:
+	leave
+	.cfi_def_cfa 7, 8
+	ret
+	.cfi_endproc
+.LFE3:
+	.size	main, .-main
+	.section	.rodata
+	.align 8
+.LC0:
+	.long	0
+	.long	1076101120
+	.align 8
+.LC1:
+	.long	0
+	.long	1093567616
+	.ident	"GCC: (Ubuntu 5.4.0-6ubuntu1~16.04.12) 5.4.0 20160609"
+	.section	.note.GNU-stack,"",@progbits
