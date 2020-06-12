@@ -16,6 +16,6 @@
 
 这些指令之间的依赖关系图如下。
 
-![](https://github.com/ma-xiaodong/computer_systems/blob/master/chap05/pictures/figure_01.png)
+<img src="./images/figure_01.png" style="zoom:80%;" />
 
 从图中可以看出，关键路径有两条，分别是xmm0-->vadd-->xmm0，以及rcx-->add-->rcx。所以整个程序的CPE受限于加法的性能。
